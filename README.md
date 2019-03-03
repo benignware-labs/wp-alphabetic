@@ -1,4 +1,4 @@
-#wp-alphabetic
+# wp-alphabetic
 
 Navigate posts alphabetically
 
