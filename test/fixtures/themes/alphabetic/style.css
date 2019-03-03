@@ -1,0 +1,33 @@
+/*
+Theme Name: Alphabetic Demo
+Description: Demo theme for the alphabetic wordpress plugin
+Author: Rafael Nowrotek
+Author URI: http://benignware.com
+Template: twentyseventeen
+Version: 1.0
+Tags:
+*/
+
+html {
+  scroll-behavior: smooth;
+}
+
+.page-numbers {
+  display: inline-block;
+}
+
+span.page-numbers:not(.current) {
+  opacity: 0.5;
+  display: inline-block;
+}
+
+.glossary-section {
+  padding: 3.5rem 0;
+}
+
+/*
+
+.navigation-top {
+  position: sticky !important;
+}
+*/
