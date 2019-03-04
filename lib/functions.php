@@ -50,6 +50,10 @@ function alphabetic_is_enabled($post_type = null) {
     $post_type = get_post_type($post);
   }
 
+  if (!$post_type) {
+    return false;
+  }
+
   $post_type_options = alphabetic_get_post_type_options();
 
   return isset($post_type_options[$post_type]) && $post_type_options[$post_type]['enabled'];

@@ -22,28 +22,12 @@ add_filter( 'alphabetic_paginate_links', function($link = '', $term = null) {
     $taxonomy = alphabetic_get_taxonomy($post_type);
 
     $url = parse_url($link);
-
-    //$term_slug = get_term_by( 'term' );
-
-    echo 's: ' . $taxonomy;
-
-    //var_dump(parse_url($link));
-    /*
-    $term_query = new WP_Query($args);
-
-    $term = $term_query->get($taxonomy);
-    */
-
-    //$terms = get_terms($taxonomy);
-
-    //$term = count($terms) > 0 ? $terms[0] : null;
-
-    //var_dump($term->slug);
     $id = 'glossary-term-' . $term;
 
     $link = get_post_type_archive_link($post_type);
     $link = $link . '#' . $id;
-    //exit;
+
+    return $link;
   }
 
   return $link;
