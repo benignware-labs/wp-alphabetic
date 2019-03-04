@@ -56,7 +56,11 @@ function alphabetic_is_enabled($post_type = null) {
 
   $post_type_options = alphabetic_get_post_type_options();
 
-  return isset($post_type_options[$post_type]) && $post_type_options[$post_type]['enabled'];
+  if (!isset($post_type_options[$post_type])) {
+    return false;
+  }
+
+  return $post_type_options[$post_type]['enabled'];
 }
 
 function alphabetic_get_taxonomy($post_type = null) {
