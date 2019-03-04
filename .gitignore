@@ -17,3 +17,6 @@ dist
 
 # Vendor
 vendor
+
+# Data
+.wp-content

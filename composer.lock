@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5fc0ae3fcbc863bd26c753040948973c",
+    "content-hash": "098202b5f663bcb937e33a3970f110ae",
     "packages": [
         {
             "name": "composer/installers",
@@ -167,6 +167,26 @@
             },
             "type": "wordpress-plugin",
             "homepage": "https://wordpress.org/plugins/post-type-archive-links/"
+        },
+        {
+            "name": "wpackagist-plugin/recent-posts-widget-extended",
+            "version": "0.9.9.7",
+            "source": {
+                "type": "svn",
+                "url": "https://plugins.svn.wordpress.org/recent-posts-widget-extended/",
+                "reference": "tags/0.9.9.7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://downloads.wordpress.org/plugin/recent-posts-widget-extended.0.9.9.7.zip",
+                "reference": null,
+                "shasum": null
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "wordpress-plugin",
+            "homepage": "https://wordpress.org/plugins/recent-posts-widget-extended/"
         },
         {
             "name": "wptrt/theme-unit-test",

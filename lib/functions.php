@@ -50,7 +50,7 @@ function alphabetic_is_enabled($post_type = null) {
     $post_type = get_post_type($post);
   }
 
-  if (!$post_type) {
+  if (!$post_type || !is_string($post_type)) {
     return false;
   }
 
