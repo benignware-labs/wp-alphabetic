@@ -27,7 +27,7 @@ function alphabetic_get_post_type_options() {
   $operator = 'and'; // 'and' or 'or' (default: 'and')
 
   $post_types = get_post_types( $args, $output, $operator );
-  $post_types['post'] = 'post';
+  //$post_types['post'] = 'post';
 
   $post_type_options = get_option('post_types') ?: array();
 
