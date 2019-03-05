@@ -4,7 +4,7 @@
  Plugin Name: Alphabetic
  Plugin URI: http://github.com/benignware/wp-menu-item-search-form
  Description: Navigate posts alphabetically
- Version: 0.0.5
+ Version: 0.0.6
  Author: Rafael Nowrotek, Benignware
  Author URI: http://benignware.com
  License: MIT
@@ -56,9 +56,11 @@ add_action( 'pre_get_posts', function( $query ) {
 
   if ($post_type) {
     if ( alphabetic_is_enabled($post_type) ) {
-      $query->set( 'posts_per_page', -1 );
-      $query->set( 'max_num_pages', -1 );
-      $query->set( 'numberposts', -1 );
+      if (is_archive()) {
+        $query->set( 'posts_per_page', -1 );
+        $query->set( 'max_num_pages', -1 );
+        $query->set( 'numberposts', -1 );
+      }
       $query->set( 'orderby', 'title' );
       $query->set( 'order', 'ASC' );
     }

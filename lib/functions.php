@@ -29,7 +29,12 @@ function alphabetic_get_post_type_options() {
   $post_types = get_post_types( $args, $output, $operator );
   //$post_types['post'] = 'post';
 
-  $post_type_options = get_option('post_types') ?: array();
+  $type_options = array();
+  $post_type_options = get_option('post_types');
+
+  if (isset($post_type_options[$post_type])) {
+    $type_options = $post_type_options[$post_type];
+  }
 
   $options = array();
 
@@ -37,7 +42,7 @@ function alphabetic_get_post_type_options() {
     $options[$post_type] = array_merge(array(
       'enabled' => 0,
       'taxonomy' => $post_type . '-dictionary',
-    ), $post_type_options[$post_type] ?: array());
+    ), $type_options);
   }
 
   return $options;
@@ -45,6 +50,10 @@ function alphabetic_get_post_type_options() {
 
 function alphabetic_is_enabled($post_type = null) {
   global $post;
+
+  if ($post === 'post') {
+    return false;
+  }
 
   if (!$post_type) {
     $post_type = get_post_type($post);
