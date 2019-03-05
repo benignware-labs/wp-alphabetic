@@ -27,18 +27,18 @@ function alphabetic_get_post_type_options() {
   $operator = 'and'; // 'and' or 'or' (default: 'and')
 
   $post_types = get_post_types( $args, $output, $operator );
-  //$post_types['post'] = 'post';
 
-  $type_options = array();
   $post_type_options = get_option('post_types');
-
-  if (isset($post_type_options[$post_type])) {
-    $type_options = $post_type_options[$post_type];
-  }
 
   $options = array();
 
   foreach ($post_types as $post_type) {
+    $type_options = array();
+
+    if (isset($post_type_options[$post_type])) {
+      $type_options = $post_type_options[$post_type];
+    }
+
     $options[$post_type] = array_merge(array(
       'enabled' => 0,
       'taxonomy' => $post_type . '-dictionary',
@@ -50,10 +50,6 @@ function alphabetic_get_post_type_options() {
 
 function alphabetic_is_enabled($post_type = null) {
   global $post;
-
-  if ($post === 'post') {
-    return false;
-  }
 
   if (!$post_type) {
     $post_type = get_post_type($post);
