@@ -166,7 +166,7 @@ function alphabetic_get_the_posts_pagination($args = array()) {
           $class = implode(' ', $classes);
 
           if (!$is_current && $has_entries) {
-            $link = apply_filters( 'alphabetic_paginate_links', get_term_link( $char, $taxonomy ), $i );
+            $link = apply_filters( 'alphabetic_paginate_links', get_term_link( $char, $taxonomy ), $char );
             $link = esc_url( $link );
             printf( '<a class="%s" href="%s">%s</a>', $class, $link, strtoupper($char) );
           } else {
