@@ -97,8 +97,7 @@ get_header(); ?>
 					?>
 				<?php endif;
 
-				wp_reset_query();
-
+			wp_reset_query();
 
 			endforeach;
 

@@ -4,7 +4,7 @@
  Plugin Name: Alphabetic
  Plugin URI: http://github.com/benignware/wp-menu-item-search-form
  Description: Navigate posts alphabetically
- Version: 0.0.9
+ Version: 0.0.10
  Author: Rafael Nowrotek, Benignware
  Author URI: http://benignware.com
  License: MIT
@@ -126,35 +126,35 @@ add_filter('get_next_post_sort', function($sort) {
 
 // Pagination
 add_action( 'save_post', function( $post_id ) {
-    // verify if this is an auto save routine.
-    // If it is our form has not been submitted, so we dont want to do anything
-    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
-        return $post_id;
-
-    $post_type = get_post_type($post_id);
-
-    $post_type_options = alphabetic_get_post_type_options();
-    $type_options = $post_type_options[$post_type] ?: array();
-
-    // Only run for enabled post types
-    if (!$type_options['enabled']) {
+  // verify if this is an auto save routine.
+  // If it is our form has not been submitted, so we dont want to do anything
+  if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
       return $post_id;
-    }
 
-    // Check permissions
-    if ( !current_user_can( 'edit_post', $post_id ) )
-        return $post_id;
+  $post_type = get_post_type($post_id);
 
-    // OK, we're authenticated: we need to find and save the data
-    $taxonomy = $type_options['taxonomy'];
+  $post_type_options = alphabetic_get_post_type_options();
+  $type_options = $post_type_options[$post_type] ?: array();
 
-    // Set term as first letter of post title, lower case
-    wp_set_post_terms( $post_id, strtolower(substr($_POST['post_title'], 0, 1)), $taxonomy );
+  // Only run for enabled post types
+  if (!$type_options['enabled']) {
+    return $post_id;
+  }
 
-    // Delete the transient that is storing the alphabet letters
-    $transient = 'alphabetic_' . $post_type . '_archive';
+  // Check permissions
+  if ( !current_user_can( 'edit_post', $post_id ) )
+      return $post_id;
 
-    delete_transient( $transient );
+  // OK, we're authenticated: we need to find and save the data
+  $taxonomy = $type_options['taxonomy'];
+
+  // Set term as first letter of post title, lower case
+  wp_set_post_terms( $post_id, strtolower(substr($_POST['post_title'], 0, 1)), $taxonomy );
+
+  // Delete the transient that is storing the alphabet letters
+  $transient = 'alphabetic_' . $post_type . '_archive';
+
+  delete_transient( $transient );
 } );
 
 add_action('init', function() {
@@ -188,106 +188,3 @@ add_action('init', function() {
     //}
   }
 }, 100);
-
-add_action( 'xxxpre_get_posts', function( $query ) {
-  global $GLOBALS;
-
-  $post_type_options = alphabetic_get_post_type_options();
-  //$args = $wp_query->query;
-  //$query_vars = $wp_query->query_vars;
-  $post_type = $query->get('post_type');
-
-  /*
-  echo $query->posts_per_page;
-  echo '<pre>';
-  var_dump($query->query);
-  echo '</pre>';
-  exit;*/
-
-  //$query->max_num_pages = 21;
-
-  $query->set('posts_per_page', -1);
-
-  //echo $post_type;
-
-  //$GLOBALS['wp_query']->max_num_pages = 21;
-  //$query->set('max_num_pages', 21);
-  /*
-  $query->query_vars = array_merge($wp_query->query_vars, array(
-    'max_num_pages' => 21
-  ));*/
-
-  //if ($post_type_options[$post_type]) {
-    //$GLOBALS['wp_query']->max_num_pages = 21;
-
-    //$query->set('paged', 1);
-    //$query->set('max_num_pages', 21);
-
-    //$current = get_query_var( 'paged' ) ? intval( get_query_var( 'paged' ) ) : 1;
-
-    /*echo '<pre>';
-    var_dump($query->query_vars);
-    echo '</pre>';
-    exit;*/
-
-    //set_query_var( 'max_num_pages', 21 );
-  //}
-
-  return $query;
-} );
-
-/*
-add_filter('paginate_links', function($link) {
-  $href_id = WP_ALPHABETIC_PAGINATED_LINK;
-  //echo "LINK";
-
-  if (strpos($link, $href_id) === FALSE) {
-    //echo "LINK";
-    return $link . $href_id;
-  }
-
-  return $link;
-});
-
-
-add_action('after_setup_theme', function() {
-  $href_id = WP_ALPHABETIC_PAGINATED_LINK;
-
-  if (!alphabetic_is_admin()) {
-    // Start observing buffer
-    ob_start(function($output) {
-      $doc = new DOMDocument();
-      @$doc->loadHTML('<?xml encoding="utf-8" ?>' . $output );
-
-      $doc_xpath = new DOMXpath($doc);
-      $elements = $doc_xpath->query('//a[contains(@href, \'' .$href_id . '\')]');
-
-      if ($elements->length === 0) {
-        return $output;
-      }
-
-      foreach ($elements as $element) {
-        $href = $element->getAttribute('href');
-        $href = preg_replace('~' . preg_quote(WP_ALPHABETIC_PAGINATED_LINK , '~') . '$~', '', $href);
-        //$href = str_replace(WP_ALPHABETIC_PAGINATED_LINK, '', $href);
-        $element->setAttribute('href', $href);
-
-        $element->setAttribute('data-wp-alphabetic', '');
-
-      }
-
-      $output = $doc->saveHTML();
-      $output = str_replace('<?xml encoding="utf-8" ?>', '', $output);
-
-      return $output;
-    });
-  }
-});
-
-add_action('shutdown', function() {
-  if (!alphabetic_is_admin()) {
-    // Flush buffer
-    ob_end_flush();
-  }
-});
-*/

@@ -1,6 +1,6 @@
 {
   "name": "benignware/alphabetic",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "type": "wordpress-plugin",
   "license": "MIT",
   "description": "Navigate posts alphabetically",

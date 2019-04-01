@@ -112,29 +112,49 @@ function alphabetic_get_the_posts_pagination($args = array()) {
   $options = $post_type_options[$post_type];
   $taxonomy = $post_type_options[$post_type]['taxonomy'];
 
-  $taxonomies = get_taxonomies();
+  $alphabetic_taxonomy = alphabetic_get_taxonomy($post_type);
+  $object_taxonomies = get_object_taxonomies($post_type);
+  $object_taxonomies = array_filter($object_taxonomies, function($taxonomy) use ($alphabetic_taxonomy) {
+    return $taxonomy !== $alphabetic_taxonomy;
+  });
 
-  //print_r($taxonomies);
+  $taxonomy_filter_values = array();
+
+  foreach ($object_taxonomies as $object_taxonomy) {
+    $object_taxonomy_value = get_query_var($object_taxonomy);
+
+    if ($object_taxonomy_value) {
+      $taxonomy_filter_values = array_merge($taxonomy_filter_values, explode(',', $object_taxonomy_value));
+    }
+  }
 
   $terms = get_terms($taxonomy);
 
   $alphabet = array();
 
-  if ($terms){
+  if ($terms) {
     foreach ($terms as $term){
       $alphabet[] = $term->slug;
     }
   }
 
+  $current_value = get_query_var($taxonomy);
+
   $charset = alphabetic_get_charset();
+
+  $posts = $wp_query->posts ?: array();
 ?>
 
   <div class="navigation pagination">
     <div class="nav-links">
       <?php
-        foreach($charset as $i) :
-          $is_current = ($i == get_query_var($taxonomy));
-          $has_entries = in_array( $i, $alphabet );
+        foreach($charset as $char) :
+          $is_current = ($char == $current_value);
+          $has_entries = in_array( $char, $alphabet );
+          $has_entries = $has_entries && count(array_filter($posts, function($post) use ($char) {
+            $title = strtolower(get_the_title($post));
+            return $title && ($title[0] === $char);
+          })) > 0;
 
           $classes = array(
             'page-numbers'
@@ -146,10 +166,11 @@ function alphabetic_get_the_posts_pagination($args = array()) {
           $class = implode(' ', $classes);
 
           if (!$is_current && $has_entries) {
-            $link = esc_url( apply_filters( 'alphabetic_paginate_links', get_term_link( $i, $taxonomy ), $i ) );
-            printf( '<a class="%s" href="%s">%s</a>', $class, $link, strtoupper($i) );
+            $link = apply_filters( 'alphabetic_paginate_links', get_term_link( $char, $taxonomy ), $i );
+            $link = esc_url( $link );
+            printf( '<a class="%s" href="%s">%s</a>', $class, $link, strtoupper($char) );
           } else {
-            printf( '<span class="%s">%s</span>', $class, strtoupper($i) );
+            printf( '<span class="%s">%s</span>', $class, strtoupper($char) );
           }
 
         endforeach;
