@@ -2,7 +2,7 @@
 
 /**
  Plugin Name: Alphabetic
- Plugin URI: http://github.com/benignware/wp-menu-item-search-form
+ Plugin URI: http://github.com/benignware/wp-alphabetic
  Description: Navigate posts alphabetically
  Version: 0.0.11
  Author: Rafael Nowrotek, Benignware
