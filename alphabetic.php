@@ -24,18 +24,12 @@ add_action( 'registered_post_type', function($post_type) {
   if ($type_options['enabled']) {
     $post_type_object = get_post_type_object($post_type);
     $post_type_label = $post_type_object->label;
-    //echo "register taxonomy $post_type -> $taxonomy";
+
     register_taxonomy($taxonomy, array($post_type), array(
       'show_ui' => false,
-      /*'hierarchical' => false,
-      'label' => $post_type_label . ' ' . __('Glossary'),
-      'labels' => array(
-        'name' => __( 'Initials' ),
-        'singular_name' => __( 'Initial' )
-      )*/
     ));
   }
-}, 10, 2 );
+}, 10, 2);
 
 add_filter( 'get_the_archive_title', function( $title ) {
   if (get_post_type() === 'glossary_entry') {
@@ -74,6 +68,7 @@ add_filter('get_previous_post_where', function($where) {
     $post_title = $post->post_title;
     $where = "WHERE p.post_title < '$post_title' AND p.post_type = '$post_type' AND ( p.post_status = 'publish' )";
 
+    // Account for WPML
     if (defined('ICL_LANGUAGE_CODE')) {
       $where.= " AND language_code = '" . ICL_LANGUAGE_CODE . "'";
     }
@@ -90,6 +85,7 @@ add_filter('get_next_post_where', function($where) {
     $post_title = $post->post_title;
     $where = "WHERE p.post_title > '$post_title' AND p.post_type = '$post_type' AND ( p.post_status = 'publish' )";
 
+    // Account for WPML
     if (defined('ICL_LANGUAGE_CODE')) {
       $where.= " AND language_code = '" . ICL_LANGUAGE_CODE . "'";
     }
@@ -126,7 +122,7 @@ add_filter('get_next_post_sort', function($sort) {
 
 // Pagination
 add_action( 'save_post', function( $post_id ) {
-  // verify if this is an auto save routine.
+  // Verify if this is an autosave routine.
   // If it is our form has not been submitted, so we dont want to do anything
   if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
       return $post_id;
@@ -162,29 +158,23 @@ add_action('init', function() {
 
   foreach($post_type_options as $post_type => $options) {
     if ($options['enabled']) {
-      //$transient = 'alphabetic_' . $post_type . '_once';
+      $alphabet = array();
 
-      //if ( false === get_transient( $transient ) ) {
-        $alphabet = array();
+      $posts = get_posts(array(
+        'numberposts' => -1,
+        'post_type' => $post_type
+      ) );
 
-        $posts = get_posts(array(
-          'numberposts' => -1,
-          'post_type' => $post_type
-        ) );
+      $taxonomy = $options['taxonomy'];
 
-        $taxonomy = $options['taxonomy'];
+      $p = null;
 
-        $p = null;
+      foreach( $posts as $p ) :
+      // Set term as first letter of post title, lower case
 
-        foreach( $posts as $p ) :
-        // Set term as first letter of post title, lower case
-
-        $term_name = strtolower(substr($p->post_title, 0, 1));
-        wp_set_post_terms( $p->ID, $term_name, $taxonomy );
-        endforeach;
-
-        //set_transient( $transient, 'true' );
-      }
-    //}
+      $term_name = strtolower(substr($p->post_title, 0, 1));
+      wp_set_post_terms( $p->ID, $term_name, $taxonomy );
+      endforeach;
+    }
   }
 }, 100);

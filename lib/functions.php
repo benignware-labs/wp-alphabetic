@@ -129,7 +129,6 @@ function alphabetic_get_the_posts_pagination($args = array()) {
   }
 
   $terms = get_terms($taxonomy);
-
   $alphabet = array();
 
   if ($terms) {
@@ -139,12 +138,11 @@ function alphabetic_get_the_posts_pagination($args = array()) {
   }
 
   $current_value = get_query_var($taxonomy);
-
   $charset = alphabetic_get_charset();
-
   $posts = $wp_query->posts ?: array();
-?>
 
+  $class = $args['class'] ? $args['class'] : 'pagination';
+?>
   <div class="navigation pagination">
     <div class="nav-links">
       <?php

@@ -11,6 +11,12 @@ Download [Docker CE](https://www.docker.com/get-docker) for your OS.
 
 Point terminal to your project root and start up the container.
 
-```cli
+```shell
 docker-compose up -d
+```
+
+Configure Wordpress
+
+```shell
+docker-compose run --rm wp install-wp
 ```
