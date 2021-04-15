@@ -98,11 +98,32 @@ function alphabetic_get_options($post_type = null) {
   return isset($post_type_options[$post_type]) && $post_type_options[$post_type];
 }
 
-// WPML
+function _alphabetic_navigation_markup( $links, $class = 'posts-navigation', $screen_reader_text = '', $aria_label = '' ) {
+  if ( empty( $screen_reader_text ) ) {
+      $screen_reader_text = __( 'Posts navigation' );
+  }
+  if ( empty( $aria_label ) ) {
+      $aria_label = $screen_reader_text;
+  }
+
+  $template = '
+  <nav class="navigation %1$s" role="navigation" aria-label="%4$s">
+      <h2 class="screen-reader-text">%2$s</h2>
+      <div class="nav-links">%3$s</div>
+  </nav>';
+
+  $template = apply_filters( 'navigation_markup_template', $template, $class );
+
+  return sprintf( $template, sanitize_html_class( $class ), esc_html( $screen_reader_text ), $links, esc_html( $aria_label ) );
+}
+
 function alphabetic_get_the_posts_pagination($args = array()) {
   global $wp_query;
 
   $post_type = $wp_query->get('post_type') ?: 'post';
+  $post_type_obj = get_post_type_object($post_type);
+  $post_type_label_name = $post_type_obj->labels->name;
+
   $post_type_options = alphabetic_get_post_type_options();
 
   if (!$post_type_options[$post_type]['enabled']) {
@@ -129,6 +150,7 @@ function alphabetic_get_the_posts_pagination($args = array()) {
   }
 
   $terms = get_terms($taxonomy);
+
   $alphabet = array();
 
   if ($terms) {
@@ -141,42 +163,52 @@ function alphabetic_get_the_posts_pagination($args = array()) {
   $charset = alphabetic_get_charset();
   $posts = $wp_query->posts ?: array();
 
-  $class = $args['class'] ? $args['class'] : 'pagination';
-?>
-  <div class="navigation pagination">
-    <div class="nav-links">
-      <?php
-        foreach($charset as $char) :
-          $is_current = ($char == $current_value);
-          $has_entries = in_array( $char, $alphabet );
-          $has_entries = $has_entries && count(array_filter($posts, function($post) use ($char) {
-            $title = strtolower(get_the_title($post));
-            return $title && ($title[0] === $char);
-          })) > 0;
+  // Make sure the nav element has an aria-label attribute: fallback to the screen reader text.
+  if ( ! empty( $args['screen_reader_text'] ) && empty( $args['aria_label'] ) ) {
+    $args['aria_label'] = $args['screen_reader_text'];
+  }
 
-          $classes = array(
-            'page-numbers'
-          );
+  $args = wp_parse_args(
+    $args,
+    array(
+      'screen_reader_text' => $post_type_label_name,
+      'aria_label'         => $post_type_label_name,
+      'class'              => 'pagination',
+    )
+  );
 
-          if ($is_current) {
-            $classes[] = 'current';
-          }
-          $class = implode(' ', $classes);
+  $links = implode(
+    '',
+    array_map(function($char) use ($posts, $current_value, $alphabet) {
+      $is_current = ($char == $current_value);
+      $has_entries = in_array( $char, $alphabet );
+      $has_entries = $has_entries && count(array_filter($posts, function($post) use ($char) {
+        $title = strtolower(get_the_title($post));
+        return $title && ($title[0] === $char);
+      })) > 0;
 
-          if (!$is_current && $has_entries) {
-            $link = apply_filters( 'alphabetic_paginate_links', get_term_link( $char, $taxonomy ), $char );
-            $link = esc_url( $link );
-            printf( '<a class="%s" href="%s">%s</a>', $class, $link, strtoupper($char) );
-          } else {
-            printf( '<span class="%s">%s</span>', $class, strtoupper($char) );
-          }
+      $classes = array(
+        'page-numbers'
+      );
 
-        endforeach;
+      if ($is_current) {
+        $classes[] = 'current';
+      }
+      $class = implode(' ', $classes);
 
-      ?>
-    </div>
-  </div>
-  <?php
+      if (!$is_current && $has_entries) {
+        $link = apply_filters( 'alphabetic_paginate_links', get_term_link( $char, $taxonomy ), $char );
+        $link = esc_url( $link );
+        return sprintf( '<a class="%s" href="%s">%s</a>', $class, $link, strtoupper($char) );
+      } else {
+        return sprintf( '<span class="%s">%s</span>', $class, strtoupper($char) );
+      }
+    }, $charset)
+  );
+
+  $navigation_markup = _alphabetic_navigation_markup($links, $args['class'], $args['screen_reader_text'], $args['aria_label']);
+
+  return $navigation_markup;
 }
 
 
