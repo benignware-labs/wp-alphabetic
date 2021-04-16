@@ -206,6 +206,7 @@ function alphabetic_get_the_posts_pagination($args = array()) {
     }, $charset)
   );
 
+  $links = apply_filters( 'paginate_links_output', $links);
   $navigation_markup = _alphabetic_navigation_markup($links, $args['class'], $args['screen_reader_text'], $args['aria_label']);
 
   return $navigation_markup;
