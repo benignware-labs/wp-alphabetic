@@ -4,7 +4,7 @@
  Plugin Name: Alphabetic
  Plugin URI: http://github.com/benignware/wp-alphabetic
  Description: Navigate posts alphabetically
- Version: 0.0.13
+ Version: 0.0.14
  Author: Rafael Nowrotek, Benignware
  Author URI: http://benignware.com
  License: MIT

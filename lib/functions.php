@@ -197,11 +197,11 @@ function alphabetic_get_the_posts_pagination($args = array()) {
       $class = implode(' ', $classes);
 
       if (!$is_current && $has_entries) {
-        $link = apply_filters( 'alphabetic_paginate_links', get_term_link( $char, $taxonomy ), $char );
+        $link = apply_filters( 'paginate_links', get_term_link( $char, $taxonomy ), $char );
         $link = esc_url( $link );
         return sprintf( '<a class="%s" href="%s">%s</a>', $class, $link, strtoupper($char) );
       } else {
-        return sprintf( '<span class="%s">%s</span>', $class, strtoupper($char) );
+        return sprintf( '<a class="%s">%s</as>', $class, strtoupper($char) );
       }
     }, $charset)
   );
@@ -216,3 +216,28 @@ function alphabetic_get_the_posts_pagination($args = array()) {
 function alphabetic_the_posts_pagination($args = array()) {
   echo alphabetic_get_the_posts_pagination($args);
 }
+
+add_filter( 'paginate_links', function($link = '', $term = null) {
+  if (!$term) {
+    return $link;
+  }
+
+  $post_type = get_post_type();
+  $post_id = get_the_ID();
+
+  $sector = get_queried_object()->name;
+
+  if (alphabetic_is_enabled($post_type)) {
+    $taxonomy = alphabetic_get_taxonomy($post_type);
+
+    $url = parse_url($link);
+    $id = $term;
+
+    $link = get_post_type_archive_link($post_type);
+    $link = $link . '#' . $id;
+
+    return $link;
+  }
+
+  return $link;
+}, 2, 10);

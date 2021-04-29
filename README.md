@@ -20,3 +20,9 @@ Configure Wordpress
 ```shell
 docker-compose run --rm wp install-wp
 ```
+
+Globally stop all running docker containers
+
+```cli
+docker stop $(docker ps -a -q)
+```
